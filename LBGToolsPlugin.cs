@@ -2,6 +2,8 @@
 using Godot;
 using System;
 
+namespace LBG.LBGTools;
+
 [Tool]
 public partial class LBGToolsPlugin : EditorPlugin {
 	public override void _EnterTree() {
