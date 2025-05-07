@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
 namespace LBG.LBGTools;
 
 /// <summary>
@@ -10,7 +6,7 @@ namespace LBG.LBGTools;
 //
 // TODO - Make thread safe? (e.g. thread-safe collections or locks)
 public class LBGSignal<T> {
-	private readonly List<CallbackEntry<T>> _listeners = []; // The list of callbacks to be called when the event is triggered.
+	private List<CallbackEntry<T>> Listeners { get; } = new(); // The list of callbacks to be called when the event is triggered.
 
 	/// <summary>
 	/// Adds a callback to the signal.
@@ -26,11 +22,11 @@ public class LBGSignal<T> {
 			TimesToTriggerRemaining = timesToTrigger,
 			Priority = priority
 		};
-		_listeners.Add(entry);
+		Listeners.Add(entry);
 	}
 
 	/// <summary> Adds a callback for when the Trigger is fired. </summary>
-	public void Add(Action<T> callback) => _listeners.Add(new CallbackEntry<T>(callback));
+	public void Add(Action<T> callback) => Listeners.Add(new CallbackEntry<T>(callback));
 
 	/// <summary> Adds a callback to be fired exactly once and then removed. </summary>
 	public void AddOnce(Action<T> callback) => Add(callback: callback, timesToTrigger: 1);
@@ -39,14 +35,14 @@ public class LBGSignal<T> {
 	public void AddLimited(Action<T> callback, int timesToTrigger) => Add(callback: callback, timesToTrigger: timesToTrigger);
 
 	/// <summary> Removes a callback for when the Trigger is fired. </summary>
-	public void Remove(Action<T> callback) => _listeners.RemoveAll(cb => cb.Callback == callback);
+	public void Remove(Action<T> callback) => Listeners.RemoveAll(cb => cb.Callback == callback);
 
 	/// <summary> Removes all registered callbacks. </summary>
-	public void Clear() => _listeners.Clear();
+	public void Clear() => Listeners.Clear();
 
 	/// <summary> Triggers the signal, calling all registered callbacks. </summary>
 	public void Emit(T arg) {
-		var toRun = _listeners
+		var toRun = Listeners
 			.OrderByDescending(e => e.Priority) // Sort by priority, highest first.
 			.ToList(); // Create a copy of the list to avoid modifying it while iterating.
 
@@ -55,7 +51,7 @@ public class LBGSignal<T> {
 		}
 
 		// Remove any callbacks that have been marked for removal.
-		_listeners.RemoveAll(cb => cb.Callback == null);
+		Listeners.RemoveAll(cb => cb.Callback == null);
 	}
 }
 
@@ -64,22 +60,7 @@ public class LBGSignal<T> {
 /// </summary>
 /// <remarks> This has to be manually maintained to mirror the LbgSignal class. </remarks>
 public class LBGSignalVoid {
-	private readonly LBGSignal<object> _signal = new();
 
-	/// <summary> Adds a callback for when the Trigger is fired. </summary>
-	public void Add(Action callback) => _signal.Add(_ => callback());
-
-	/// <summary> Adds a callback to be fired exactly once and then removed. </summary>
-	public void AddOnce(Action callback) => _signal.AddOnce(_ => callback());
-
-	/// <summary> Removes a callback for when the Trigger is fired. </summary>
-	public void Remove(Action callback) => _signal.Remove(_ => callback());
-
-	/// <summary> Removes all registered callbacks. </summary>
-	public void Clear() => _signal.Clear();
-
-	/// <summary> Triggers the signal, calling all registered callbacks. </summary>
-	public void Emit() => _signal.Emit(null);
 }
 
 /// <summary>
@@ -88,7 +69,7 @@ public class LBGSignalVoid {
 /// <typeparam name="T">The type of the argument passed to the callback.</typeparam>
 /// <remarks> This class is used internally by the LbgSignal class to manage the callbacks. </remarks>
 public class CallbackEntry<T> {
-	public Action<T> Callback { get; set; }
+	public Action<T>? Callback { get; set; }
 	public int Priority = 0;
 	public int? TimesToTriggerRemaining = null; // If not null, the callback will be removed when this number reaches 0.
 
