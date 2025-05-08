@@ -50,6 +50,34 @@ public class LBGSignal_T1Tests {
     }
 
     [Fact]
+    public void Limited_Callback_ShouldBeRemovedAfterCall() {
+        // Arrange
+        var signal = new LBGSignal<int>();
+        var callCount = 0;
+
+        signal.Add(arg => callCount++).Once();
+        signal.Add(arg => callCount++).CallLimit(1);
+        signal.Add(arg => callCount++).CallLimit(2);
+        signal.Add(arg => callCount++).CallLimit(3);
+        signal.Add(arg => callCount++);
+
+        // Act / Assert
+        Assert.Equal(5, signal.Count);
+        signal.Emit(42);
+        Assert.Equal(5, callCount);
+        Assert.Equal(3, signal.Count);
+        signal.Emit(42);
+        Assert.Equal(8, callCount);
+        Assert.Equal(2, signal.Count);
+        signal.Emit(42);
+        Assert.Equal(10, callCount);
+        Assert.Equal(1, signal.Count);
+        signal.Emit(42);
+        Assert.Equal(11, callCount);
+        Assert.Equal(1, signal.Count);
+    }
+
+    [Fact]
     public void AddLimited_Callback_ShouldBeCalledLimitedTimes() {
         // Arrange
         var signal = new LBGSignal<int>();

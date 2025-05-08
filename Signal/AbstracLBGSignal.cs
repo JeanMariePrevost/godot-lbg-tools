@@ -26,7 +26,7 @@ public abstract class AbstractLBGSignal<TExposed, TWrapped> where TExposed : Del
     /// Converts a user-supplied callback (e.g. Action<T1,T2>)
     /// into a callback that takes the internal wrapped payload (e.g. (T1,T2)).
     /// </summary>
-    protected abstract Action<TWrapped> Wrap(TExposed userCb);
+    protected abstract Action<TWrapped> Wrap(TExposed calback);
 
     /// <summary> The list of callbacks to be called when the event is triggered. </summary>
 	protected List<SignalListener<TWrapped>> Listeners { get; } = [];
