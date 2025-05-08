@@ -1,22 +1,15 @@
 namespace LBG.LBGTools.Signal;
 
-/// <summary>
-/// A type-safe signal that takes one argument.
-/// </summary>
-/// <typeparam name="T">The type of the argument passed to the signal's listeners.</typeparam>
-public sealed class LBGSignal<T>
-	: AbstractLBGSignal<Action<T>, ValueTuple<T>> {
-	public LBGSignal() { }
+public readonly struct Unit { }   // empty struct, just a placeholder for "void" type
 
-	/// <summary>
-	/// Converts a user-supplied Action<T1> into an Action<(T1)> used internally.
-	/// </summary>
-	protected override Action<ValueTuple<T>> Wrap(Action<T> userCb)
-		=> t => userCb(t.Item1);
+// your non-generic signal
+public sealed class LBGSignal
+  : AbstractLBGSignal<Action, Unit> {
+    // wrap the void Action into an Action<Unit> that ignores its parameter
+    protected override Action<Unit> WrapActionArgsToTuple(Action callback)
+        => _ => callback();
 
-	/// <summary>
-	/// Emits the signal with one argument.
-	/// </summary>
-	public void Emit(T arg) => Emit(new ValueTuple<T>(arg));
+    // expose the clean no-arg Emit() to users
+    public void Emit()
+        => Emit(default);
 }
-

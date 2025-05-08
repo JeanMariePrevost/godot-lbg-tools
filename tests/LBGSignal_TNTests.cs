@@ -3,35 +3,35 @@ using Xunit;
 namespace LBG.LBGTools.Signal.Tests;
 public class LBGSignal_TNTests {
 
-    // [Fact]
-    // public void LBGSignal_T0_Everything_ShouldWork() {
-    //     // Arrange
-    //     var signal = new LBGSignal();
+    [Fact]
+    public void LBGSignal_T0_Everything_ShouldWork() {
+        // Arrange
+        var signal = new LBGSignal();
 
-    //     var list = new List<string>();
+        var list = new List<string>();
 
-    //     void normal() => list.Add("N");
-    //     void once() => list.Add("O");
-    //     void limited() => list.Add("L");
-    //     void toRemove() => list.Add("FAIL");
+        void normal() => list.Add("N");
+        void once() => list.Add("O");
+        void limited() => list.Add("L");
+        void toRemove() => list.Add("FAIL");
 
-    //     signal.Add(normal).WithPriority(1);
-    //     signal.Add(once).Once();
-    //     signal.Add(limited).CallLimit(2);
-    //     signal.Add(toRemove);
-    //     signal.Remove(toRemove);
+        signal.Add(normal).WithPriority(1);
+        signal.Add(once).Once();
+        signal.Add(limited).CallLimit(2);
+        signal.Add(toRemove);
+        signal.Remove(toRemove);
 
-    //     // Act
-    //     signal.Emit();
-    //     signal.Emit();
-    //     signal.Clear();
-    //     signal.Emit();
+        // Act
+        signal.Emit();
+        signal.Emit();
+        signal.Clear();
+        signal.Emit();
 
-    //     // Assert
-    //     var expected = new List<string> { "N", "O", "L", "N", "L" };
+        // Assert
+        var expected = new List<string> { "N", "O", "L", "N", "L" };
 
-    //     Assert.Equal(expected, list);
-    // }
+        Assert.Equal(expected, list);
+    }
 
     [Fact]
     public void LBGSignal_T1_Everything_ShouldWork() {
