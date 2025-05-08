@@ -1,4 +1,3 @@
-using LBG.LBGTools.Signal;
 using Xunit;
 
 namespace LBG.LBGTools.Signal.Tests;

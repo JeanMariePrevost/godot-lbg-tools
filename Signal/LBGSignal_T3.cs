@@ -13,7 +13,7 @@ public sealed class LBGSignal<T1, T2, T3>
     /// <summary>
     /// Converts a user-supplied Action<T1, T2, T3> into an Action<(T1, T2, T3)> used internally.
     /// </summary>
-    protected override Action<ValueTuple<T1, T2, T3>> Wrap(Action<T1, T2, T3> callback)
+    protected override Action<ValueTuple<T1, T2, T3>> WrapActionArgsToTuple(Action<T1, T2, T3> callback)
         => t => callback(t.Item1, t.Item2, t.Item3);
 
     /// <summary>

@@ -5,65 +5,61 @@ namespace LBG.LBGTools.Signal;
 /// It also keeps a map of callbacks to their wrapped version, allowing for "finding" the callback by its original signature.
 /// This allows it to handle any arity of callbacks for a minimal performance cost, e.g. Action<T1>, Action<T1, T2>, Action<T1, T2, T3>, etc.
 /// </summary>
+///
 /// <typeparam name="TExposed">
 /// The type used by this adapter layer, exposed to the classes that use/extend it, e.g. Action<T1, T2, T3>.
 /// It is the type that gets "exposed" though the public interface of this class, e.g. Add, Remove, etc.
 /// Has to be a delegate type (e.g. Action, Func, etc.).
 /// </typeparam>
-/// <typeparam name="TWrapped">
+///
+/// <typeparam name="TTupled">
 /// The type that TExposed gets wrapped into, to be used by LBGSignal<T> under the hood, e.g. (T1, T2, T3).
 /// This one is a tuple type, not a delegate.
 /// </typeparam>
-public abstract class AbstractLBGSignal<TExposed, TWrapped> where TExposed : Delegate // i.e. it "must be a function"
+public abstract class AbstractLBGSignal<TExposed, TTupled> where TExposed : Delegate // i.e. it "must be a function"
 {
     /// <summary>
-    /// A map of the callbacks to their wrapped versions, allowing for finding/removing the original delegate.
-    /// Otherwise wrapping creates a new delegate each time, making it impossible to find the original one.
+    /// A map of the Delegate to DelegateEntry, allowing for the lookup of potentially wrapped callbacks (e.g. lambdas being used)
     /// </summary>
-    private readonly Dictionary<TExposed, Action<TWrapped>> _map = [];
+    internal readonly Dictionary<TExposed, ListenerEntry> _map = [];
 
     /// <summary>
     /// Converts a user-supplied callback (e.g. Action<T1,T2>)
-    /// into a callback that takes the internal wrapped payload (e.g. (T1,T2)).
+    /// into a callback that takes the internal wrapped payload (e.g. Action<(T1,T2)>).
     /// </summary>
-    protected abstract Action<TWrapped> Wrap(TExposed calback);
+    /// <remarks> This has to be "hard-coded" for each arity </remarks>
+    protected abstract Action<TTupled> WrapActionArgsToTuple(TExposed callback);
 
     /// <summary> The list of callbacks to be called when the event is triggered. </summary>
-	protected List<SignalListener<TWrapped>> Listeners { get; } = [];
+	protected List<ListenerEntry> Listeners { get; } = [];
 
     // ------------------------------------------
     // Public interface
     // ------------------------------------------
 
     /// <summary>
-    /// Adds a callback to the signal.
+    /// Adds a listener for this signal.
     /// </summary>
-    /// <param name="callback">The callback action to be invoked when the signal is triggered.</param>
-    /// <param name="timesToTrigger">The number of times the callback should be triggered before being removed.</param>
-    /// <param name="priority">
-    /// The priority of the callback. Higher priority callbacks are executed first.
-    /// Defaults to 0 if not specified.
-    /// </param>
+    /// <param name="callbackAction">The callback action to be invoked when the signal is triggered.</param>
     /// <remarks>
     /// Use the fluent API to set the priority and times to trigger. E.g.:
     /// <code>signal.Add(callback).WithPriority(1).CallLimit(2);</code>
     /// <code>signal.Add(callback).Once();</code>
     /// </remarks>
-    public SignalListener<TWrapped> Add(TExposed callback) {
-        var wrappedCallback = GetOrCreate(callback);
-        var entry = new SignalListener<TWrapped>(wrappedCallback);
-        Listeners.Add(entry);
-        return entry;
+    public ListenerEntry Add(TExposed callbackAction) {
+        var listenerEntry = GetOrAddNewListener(callbackAction); // This also adds the ListenerEntry if it had to be created.
+        return listenerEntry;
     }
 
-    public bool Contains(TExposed cb) => _map.ContainsKey(cb);
+    /// <summary> Whether there is a callback registered for this signature. </summary>
+    public bool Contains(TExposed callbackAction) => _map.ContainsKey(callbackAction);
 
-    public void Remove(TExposed cb) {
-        if (_map.TryGetValue(cb, out var wrapped)) {
-            // We have a wrapped version of this callback, so remove it from the listeners.
-            Listeners.RemoveAll(listener => listener.Callback == wrapped);
-            // Remove the wrapped version from the map as well.
-            _map.Remove(cb);
+    /// <summary> Removes a callback from the signal, by its original signature. </summary>
+    public void Remove(TExposed callbackAction) {
+        if (_map.TryGetValue(callbackAction, out var wrapped)) {
+            // We do have an entry for this callback, so we can remove it.
+            Listeners.Remove(wrapped);
+            _map.Remove(callbackAction);
         }
     }
 
@@ -78,17 +74,24 @@ public abstract class AbstractLBGSignal<TExposed, TWrapped> where TExposed : Del
 
     /// <summary> Triggers the signal, calling all registered callbacks. </summary>
     /// <param name="arg">The argument to pass to the callbacks.</param>
-    public void Emit(TWrapped arg) {
+    public void Emit(TTupled arg) {
+        // Prepare and sort the list of callbacks to be called.
         var toRun = Listeners
             .OrderByDescending(e => e.Priority) // Sort by priority, highest first.
             .ToList(); // Create a copy of the list to avoid modifying it while iterating.
 
+        // Call each callback in the sorted list.
         foreach (var entry in toRun) {
-            entry.Call(arg);
+            entry.Invoke(arg);
         }
 
-        // Remove any callbacks that have been marked for removal.
+        // Remove expired entries from the list of listeners
         Listeners.RemoveAll(cb => cb.IsExpired);
+
+        // Remove expired entries from the map as well.
+        foreach (var key in _map.Where(kvp => kvp.Value.IsExpired).Select(kvp => kvp.Key).ToList()) {
+            _map.Remove(key);
+        }
     }
 
     // ------------------------------------------
@@ -99,17 +102,19 @@ public abstract class AbstractLBGSignal<TExposed, TWrapped> where TExposed : Del
     /// Helper function that checks if the callback is already wrapped and stored in the map.
     /// This allows us to use the wrapped version of callbacks just like the original ones.
     /// </summary>
-    /// <param name="callbackDelegate">The target callback function </param>
-    /// <returns> The wrapped version of the callback using only a single argument </returns>
-    private Action<TWrapped> GetOrCreate(TExposed callbackDelegate) {
-        if (_map.TryGetValue(callbackDelegate, out var wrapped)) {
-            // We already have a wrapped version of this callback, so just return it.
-            return wrapped;
+    /// <param name="sourceDelegate"> The target callback function </param>
+    /// <returns> A new or existing ListenerEntry for this sourceDelegate. </returns>
+    protected ListenerEntry GetOrAddNewListener(TExposed sourceDelegate) {
+        if (_map.TryGetValue(sourceDelegate, out var existingEntry)) {
+            // We already have a ListenerEntry for this callback, so just return it.
+            return existingEntry;
         }
 
         // We don't have a wrapped version yet, so create one and store it in the map.
-        wrapped = Wrap(callbackDelegate);
-        _map[callbackDelegate] = wrapped;
-        return wrapped;
+        var actionUsingTupledArgs = WrapActionArgsToTuple(sourceDelegate);
+        var newEntry = ListenerEntry.CreateFrom(actionUsingTupledArgs);
+        _map[sourceDelegate] = newEntry;
+        if (!Listeners.Contains(newEntry)) Listeners.Add(newEntry);
+        return newEntry;
     }
 }
