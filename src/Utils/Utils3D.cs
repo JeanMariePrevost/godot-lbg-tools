@@ -5,8 +5,7 @@ namespace LBG.LBGTools.Utils;
 /// <summary>
 /// A general helper class for various utility functions.
 /// </summary>
-public static class Utils3D
-{
+public static class Utils3D {
 
     /// <summary>
     /// Determines whether a given screen point is "within" a given 3D area from a specific camera's perspective.
@@ -17,8 +16,7 @@ public static class Utils3D
     /// <param name="maxDistance">The maximum distance for the raycast in 3D space. Defaults to 1000 units.</param>
     /// <param name="maxHits">The maximum number of raycast hits to process. Defaults to 1 (first hit only). Increasing this allows checking for overlapping areas.</param>
     /// <returns> <c>true</c> if the screen point projects onto the specified <see cref="Area3D"/>; otherwise, <c>false</c>.</returns>
-    public static bool IsScreenPointOverArea3D(Vector2 screenPoint, Area3D area, Camera3D camera, float maxDistance = 1000f, int maxHits = 1)
-    {
+    public static bool IsScreenPointOverArea3D(Vector2 screenPoint, Area3D area, Camera3D camera, float maxDistance = 1000f, int maxHits = 1) {
         // build ray endpoints
         Vector3 from = camera.ProjectRayOrigin(screenPoint);
         Vector3 dir = camera.ProjectRayNormal(screenPoint);
@@ -33,19 +31,15 @@ public static class Utils3D
         query.CollideWithBodies = false;
 
         // iterative raycasts up to maxHits
-        for (int i = 0; i < maxHits; i++)
-        {
+        for (int i = 0; i < maxHits; i++) {
             query.Exclude = exclude;
             var result = spaceState.IntersectRay(query);
-            if (!result.TryGetValue("collider", out var obj))
-            {
+            if (!result.TryGetValue("collider", out var obj)) {
                 break; // nothing hit, exit loop
             }
 
-            if (obj.As<Area3D>() is Area3D hit)
-            {
-                if (hit == area)
-                {
+            if (obj.As<Area3D>() is Area3D hit) {
+                if (hit == area) {
                     return true; // hit the area we are looking for
                 }
 
@@ -63,8 +57,7 @@ public static class Utils3D
     /// <param name="maxDistance">The maximum distance for the raycast.</param>
     /// <param name="maxHits">The maximum number of raycast hits to process. Defaults to 1 (first hit only). Increasing this allows checking for overlapping areas.</param>
     /// /// <returns><c>true</c> if the cursor is over the area; otherwise, <c>false</c>.</returns>
-    public static bool IsCursorOverArea3D(Area3D area, Camera3D camera, float maxDistance = 1000f, int maxHits = 1)
-    {
+    public static bool IsCursorOverArea3D(Area3D area, Camera3D camera, float maxDistance = 1000f, int maxHits = 1) {
         Vector2 mousePos = camera.GetViewport().GetMousePosition();
         return IsScreenPointOverArea3D(mousePos, area, camera, maxDistance, maxHits);
     }
@@ -79,8 +72,7 @@ public static class Utils3D
     /// <param name="maxDistance">The maximum distance for the raycast in 3D space. Defaults to 1000 units.</param>
     /// /// <param name="maxHits">The maximum number of raycast hits to process. Defaults to 1 (first hit only). Increasing this allows checking for overlapping areas.</param>
     /// /// <returns> <c>true</c> if the point projects onto the specified <see cref="Area3D"/>; otherwise, <c>false</c>.</returns>
-    public static bool IsUnprojectedPointOverArea3D(Vector3 pointIn3dSpace, Area3D area, Camera3D camera, float maxDistance = 1000f, int maxHits = 1)
-    {
+    public static bool IsUnprojectedPointOverArea3D(Vector3 pointIn3dSpace, Area3D area, Camera3D camera, float maxDistance = 1000f, int maxHits = 1) {
         Vector2 screenPoint = camera.UnprojectPosition(pointIn3dSpace);
         return IsScreenPointOverArea3D(screenPoint, area, camera, maxDistance, maxHits);
     }
@@ -93,16 +85,14 @@ public static class Utils3D
     /// <param name="planeNormal">The normal vector of the plane.</param>
     /// <param name="camera">The camera used to project the ray.</param>
     /// <param name="viewport">The viewport used to get the mouse position.</param>
-    public static Vector3? GetCursorPositionOnPlane(Vector3 planePoint, Vector3 planeNormal, Viewport viewport)
-    {
+    public static Vector3? GetCursorPositionOnPlane(Vector3 planePoint, Vector3 planeNormal, Viewport viewport) {
         var mousePos = viewport.GetMousePosition();
         var camera = viewport.GetCamera3D();
         var origin = camera.ProjectRayOrigin(mousePos);
         var direction = camera.ProjectRayNormal(mousePos);
 
         float denom = direction.Dot(planeNormal);
-        if (Mathf.Abs(denom) < Mathf.Epsilon)
-        {
+        if (Mathf.Abs(denom) < Mathf.Epsilon) {
             return null; // The ray is parallel to the plane, no intersection
         }
 
