@@ -3,7 +3,8 @@ namespace LBG.LBGTools.Signal;
 /// <summary>
 /// A type-safe signal that takes two arguments.
 /// </summary>
-/// <typeparam name="T">The type of the argument passed to the signal's listeners.</typeparam>
+/// <typeparam name="T1">The type of the first argument passed to the signal's listeners.</typeparam>
+/// <typeparam name="T2">The type of the second argument passed to the signal's listeners.</typeparam>
 public sealed class LBGSignal<T1, T2>
     : AbstractLBGSignal<Action<T1, T2>, ValueTuple<T1, T2>> {
     public LBGSignal() { }
