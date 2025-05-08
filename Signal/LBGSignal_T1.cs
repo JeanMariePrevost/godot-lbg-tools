@@ -11,12 +11,10 @@ public sealed class LBGSignal<T>
 	/// <summary>
 	/// Converts a user-supplied Action<T1> into an Action<(T1)> used internally.
 	/// </summary>
-	protected override Action<ValueTuple<T>> WrapActionArgsToTuple(Action<T> callback)
-		=> t => callback(t.Item1);
+	protected override Action<ValueTuple<T>> WrapActionArgsToTuple(Action<T> callback) => t => callback(t.Item1);
 
 	/// <summary>
 	/// Emits the signal with one argument.
 	/// </summary>
 	public void Emit(T arg) => Emit(new ValueTuple<T>(arg));
 }
-
