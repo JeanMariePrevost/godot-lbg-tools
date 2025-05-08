@@ -16,19 +16,20 @@
 
 ## Installation & Usage
 
-Copy this repository into your Godot project’s `addons/` folder and enable the plugin:
+1. Copy this repository or download the /src/ folder
 
-1. Clone or download:
+2. Move the contents of the /src/ folder into your Godot project’s `addons/lbg_tools` folder  
+   You can also create a symlink of the same name for easier development or reuse across projects.  
+   Note: **the root of the plugin folder _must_ be "/lbg_tools/" for Godot to be able to load it as a plugin.**
 
-   ```bash
-   cd /path/to/your/godot/project
-   git clone https://github.com/YourUser/godot-lbg-tools.git addons/lbg_tools
-   ```
+3. At this point, you should have:  
+   _res://addons/lbg_tools/LBGToolsPlugin.cs_  
+   _res://addons/lbg_tools/plugin.cfg_  
+   _res://addons/lbg_tools/..._
 
-2. In the Godot editor, open **Project → Project Settings → Plugins**,
-   find **LBG Tools** and set **Enabled** to **On**.
-
-_or_ copy the `src/` folder into your project and consume the source files directly.
+4. In the Godot editor, open **Project → Project Settings → Plugins**.  
+   If everything went as expected, you should now see the **LBG Tools** plugin.  
+   To use it, set **Enabled** to **On**.
 
 ---
 
