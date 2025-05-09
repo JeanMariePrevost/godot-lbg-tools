@@ -112,6 +112,44 @@ public class LBGSignal_T1Tests {
     }
 
     [Fact]
+    public void EmittingSignal_ShouldReportCorrectState() {
+        // Arrange
+        var signal = new LBGSignal<int>();
+        var reportsEmitting = false;
+
+        signal.Add(arg => reportsEmitting = signal.IsEmitting);
+
+        // Act
+        signal.Emit(42);
+
+        // Assert
+        Assert.False(signal.IsEmitting);
+        Assert.False(signal.InterruptRequested);
+        Assert.True(reportsEmitting);
+    }
+
+    [Fact]
+    public void InterruptedSignal_ShouldStopEmitting() {
+        // Arrange
+        var signal = new LBGSignal<int>();
+        var callCount = 0;
+
+        signal.Add(arg => callCount++).WithPriority(5);
+        signal.Add(_ => Assert.True(signal.IsEmitting)).WithPriority(4);
+        signal.Add(_ => Assert.False(signal.InterruptRequested)).WithPriority(4);
+        signal.Add(_ => signal.InterruptCurrentEmission()).WithPriority(3);
+        signal.Add(_ => Assert.True(signal.IsEmitting)).WithPriority(2);
+        signal.Add(_ => Assert.True(signal.InterruptRequested)).WithPriority(2);
+        signal.Add(arg => callCount++).WithPriority(1);
+
+        // Act
+        signal.Emit(42);
+
+        // Assert
+        Assert.Equal(1, callCount);
+    }
+
+    [Fact]
     public void ComplexObjects_ShouldBePassedCorrectly() {
         // Arrange
         var signal1 = new LBGSignal<(int, string, float)?>();
