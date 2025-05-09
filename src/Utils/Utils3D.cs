@@ -3,7 +3,7 @@ using Godot;
 namespace LBG.LBGTools.Utils;
 
 /// <summary>
-/// A general helper class for various utility functions.
+/// A helper class for various utility functions that are specific to 3D.
 /// </summary>
 public static class Utils3D {
 
