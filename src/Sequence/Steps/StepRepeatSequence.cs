@@ -1,23 +1,22 @@
 using System;
 using System.Threading.Tasks;
-using Godot;
 
-namespace LBG.Handustry.Sequencing.Steps;
+namespace LBG.LBGTools.Sequence.Steps;
 
 /// <summary>
-/// Repeats the previous step a specified number of times.
+/// Repeats the entire sequence from the beginning a specified number of times.
 /// </summary>
-public class StepRepeatPrevious : IStep {
+public class StepRepeatSequence : IStep {
     private readonly int Times;
     private int _repeatCount = 0;
 
-    public StepRepeatPrevious(int times) {
+    public StepRepeatSequence(int times) {
         Times = times;
     }
 
     public Task Execute(Action<SequenceCommand> sequenceControlCallback) {
         if (_repeatCount < Times) {
-            sequenceControlCallback(SequenceCommand.RepeatPrevious);
+            sequenceControlCallback(SequenceCommand.RepeatFromBeginning);
             _repeatCount++;
         }
         return Task.CompletedTask;

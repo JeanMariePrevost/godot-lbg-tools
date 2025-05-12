@@ -1,8 +1,7 @@
 using System;
 using System.Threading.Tasks;
-using Godot;
 
-namespace LBG.Handustry.Sequencing.Steps;
+namespace LBG.LBGTools.Sequence.Steps;
 
 /// <summary>
 /// Calls an action.
@@ -11,7 +10,6 @@ public class StepCallAction : IStep {
     public Action Action { get; set; }
 
     public StepCallAction(Action action) {
-        Print($"StepCallAction constructor called with {action}");
         Action = action;
     }
 

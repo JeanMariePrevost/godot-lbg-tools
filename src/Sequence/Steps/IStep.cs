@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
 
-namespace LBG.Handustry.Sequencing.Steps;
+namespace LBG.LBGTools.Sequence.Steps;
 
 /// <summary>
 /// Represents a single step in a sequence of operations.

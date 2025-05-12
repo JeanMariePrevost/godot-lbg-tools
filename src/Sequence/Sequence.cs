@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
-using LBG.Handustry.Sequencing.Steps;
+using LBG.LBGTools.Sequence.Steps;
 using Godot;
 using LBG.LBGTools.Signal;
 
-namespace LBG.Handustry.Sequencing;
+namespace LBG.LBGTools.Sequence;
 
 /// <summary>
 /// A sequencing utility that allows scheduling of steps (delays, signals, conditions, etc.) to be executed in order.
@@ -87,7 +87,6 @@ public class Sequence {
         var sequence = new Sequence();
         sequence.WaitUntil(predicate).Do(action).Start();
     }
-
 
     public Sequence() { }
 
@@ -193,11 +192,10 @@ public class Sequence {
             var wrapped = new StepTimeoutDecorator(Steps[^1], timeout);
             Steps[^1] = wrapped;
         } else {
-            PrintError("Cannot set timeout for an empty sequence.");
+            // PrintError("Cannot set timeout for an empty sequence.");
         }
         return this;
     }
-
 
     /// <summary>
     /// Starts executing the sequence asynchronously, one step at a time.
@@ -235,7 +233,7 @@ public class Sequence {
                 Steps[_currentStepIndex - 1].Reset();
                 _currentStepIndex -= 2;
             } else {
-                PrintError("Cannot repeat previous step. Are you calling RepeatPrevious() on an empty sequence?");
+                // PrintError("Cannot repeat previous step. Are you calling RepeatPrevious() on an empty sequence?");
             }
         } else if (command == SequenceCommand.Break) {
             _breakRequested = true;

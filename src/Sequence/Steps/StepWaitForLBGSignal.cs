@@ -1,9 +1,8 @@
 using System;
 using System.Threading.Tasks;
-using Godot;
 using LBG.LBGTools.Signal;
 
-namespace LBG.Handustry.Sequencing.Steps;
+namespace LBG.LBGTools.Sequence.Steps;
 
 /// <summary>
 /// Waits for a LBGSignal to be emitted.
@@ -14,7 +13,6 @@ namespace LBG.Handustry.Sequencing.Steps;
 public class StepWaitForLBGSignal : IStep {
     private readonly LBGSignal? _signal;
     private TaskCompletionSource _tcs = new();
-
 
     public StepWaitForLBGSignal(LBGSignal signal) {
         _signal = signal;
@@ -40,7 +38,6 @@ public class StepWaitForLBGSignal : IStep {
     }
 }
 
-
 /// <summary>
 /// Waits for a LBGSignal<T> to be emitted.
 /// </summary>
@@ -50,7 +47,6 @@ public class StepWaitForLBGSignal : IStep {
 public class StepWaitForLBGSignal<T> : IStep {
     private readonly LBGSignal<T>? _signal;
     private TaskCompletionSource _tcs = new();
-
 
     public StepWaitForLBGSignal(LBGSignal<T> signal) {
         _signal = signal;
@@ -75,5 +71,4 @@ public class StepWaitForLBGSignal<T> : IStep {
         _tcs = new();
     }
 }
-
 

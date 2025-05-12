@@ -2,28 +2,28 @@ using System;
 using System.Threading.Tasks;
 using Godot;
 
-namespace LBG.Handustry.Sequencing.Steps;
+namespace LBG.LBGTools.Sequence.Steps;
 
 /// <summary>
-/// Waits until a certain number of "Physics Frames" have occurred.
+/// Waits until a certain number of "Process Frames" have occurred.
 /// </summary>
-public class StepWaitPhysicsFrames : IStep {
+public class StepWaitFrames : IStep {
     public int Frames { get; set; }
 
-    public StepWaitPhysicsFrames(int frames) {
-        // Print($"StepWaitPhysicsFrames constructor called with {frames} frames");
+    public StepWaitFrames(int frames) {
+        // Print($"StepWaitFrames constructor called with {frames} frames");
         Frames = frames;
     }
 
     public async Task Execute(Action<SequenceCommand> sequenceControlCallback) {
         var tree = Engine.GetMainLoop() as SceneTree ?? throw new Exception("Failed to get SceneTree");
-        // Print($"Waiting for {Frames} physics frames");
+        // Print($"Waiting for {Frames} frames");
 
         for (int i = 0; i < Frames; i++) {
-            await tree.ToSignal(tree, "physics_frame");
+            await tree.ToSignal(tree, "process_frame");
         }
 
-        // Print($"Finished waiting for {Frames} physics frames");
+        // Print($"Finished waiting for {Frames} frames");
     }
 
     public void Reset() {

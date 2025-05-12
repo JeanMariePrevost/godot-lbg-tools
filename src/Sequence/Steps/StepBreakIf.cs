@@ -1,8 +1,7 @@
 using System;
 using System.Threading.Tasks;
-using Godot;
 
-namespace LBG.Handustry.Sequencing.Steps;
+namespace LBG.LBGTools.Sequence.Steps;
 
 /// <summary>
 /// Interrupts the sequence if the predicate returns true.
@@ -12,7 +11,6 @@ public class StepBreakIf : IStep {
     private readonly Func<bool> _predicate;
 
     public StepBreakIf(Func<bool> predicate) {
-        Print($"StepBreakIf constructor called.");
         _predicate = predicate;
     }
 

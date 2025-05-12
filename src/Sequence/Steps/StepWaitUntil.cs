@@ -2,7 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Godot;
 
-namespace LBG.Handustry.Sequencing.Steps;
+namespace LBG.LBGTools.Sequence.Steps;
 
 /// <summary>
 /// Waits until a predicate returns true.
