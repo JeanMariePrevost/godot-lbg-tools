@@ -3,37 +3,34 @@ using LBG.LBGTools.Sequencing;
 
 namespace LBG.LBGTools.Tests {
     public class SequenceTests {
-        [Fact]
-        public async Task Test_DoAfterSeconds() {
-            bool actionExecuted = false;
-            Sequence.DoAfterSeconds(1.0f, () => actionExecuted = true);
-            await Task.Delay(1100); // Wait for the action to execute
-            Assert.True(actionExecuted, "Action should be executed after 1 second.");
-        }
+        // TODO: Move over to GdUnit4 because these need the Godot Engine
+        // [Fact]
+        // public async Task Test_DoAfterSeconds() {
+        //     bool actionExecuted = false;
+        //     Sequence.DoAfterSeconds(1.0f, () => actionExecuted = true);
+        //     await Task.Delay(1100); // Wait for the action to execute
+        //     Assert.True(actionExecuted, "Action should be executed after 1 second.");
+        // }
+
+        // [Fact]
+        // public void Test_DoAfterFrames() {
+        //     bool actionExecuted = false;
+        //     Sequence.DoAfterFrames(1, () => actionExecuted = true);
+        //     // Simulate frame delay
+        //     Task.Delay(16).Wait(); // Assuming ~60 FPS, wait for ~1 frame
+        //     Assert.True(actionExecuted, "Action should be executed after 1 frame.");
+        // }
 
         [Fact]
-        public void Test_DoAfterFrames() {
-            bool actionExecuted = false;
-            Sequence.DoAfterFrames(1, () => actionExecuted = true);
-            // Simulate frame delay
-            Task.Delay(16).Wait(); // Assuming ~60 FPS, wait for ~1 frame
-            Assert.True(actionExecuted, "Action should be executed after 1 frame.");
-        }
-
-        [Fact]
-        public void Test_SequenceExecution() {
+        public void Test_SequenceDo() {
             var sequence = new Sequence();
             int counter = 0;
 
             sequence
                 .Do(() => counter++)
-                .WaitSeconds(0.1f)
-                .Do(() => counter++);
+                .Start();
 
-            sequence.Start();
-            Task.Delay(200).Wait(); // Wait for the sequence to complete
-
-            Assert.Equal(2, counter);
+            Assert.Equal(1, counter);
         }
 
         [Fact]
@@ -46,7 +43,6 @@ namespace LBG.LBGTools.Tests {
                 .RepeatSequence(2);
 
             sequence.Start();
-            Task.Delay(100).Wait(); // Wait for the sequence to complete
 
             Assert.Equal(3, counter); // 1 initial + 2 repeats
         }
@@ -62,7 +58,6 @@ namespace LBG.LBGTools.Tests {
                 .Do(() => counter++);
 
             sequence.Start();
-            Task.Delay(100).Wait(); // Wait for the sequence to complete
 
             Assert.Equal(1, counter); // Only the first action should execute
         }
