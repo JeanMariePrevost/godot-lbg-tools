@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
 
-namespace LBG.LBGTools.Sequence.Steps;
+namespace LBG.LBGTools.Sequencing.Steps;
 
 /// <summary>
 /// Repeats the entire sequence from the beginning a specified number of times.

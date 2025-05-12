@@ -2,7 +2,7 @@ using System;
 using System.Threading.Tasks;
 using LBG.LBGTools.Signal;
 
-namespace LBG.LBGTools.Sequence.Steps;
+namespace LBG.LBGTools.Sequencing.Steps;
 
 /// <summary>
 /// Waits for a LBGSignal to be emitted.

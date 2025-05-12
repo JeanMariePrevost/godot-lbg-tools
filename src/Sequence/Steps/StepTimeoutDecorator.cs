@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
 
-namespace LBG.LBGTools.Sequence.Steps;
+namespace LBG.LBGTools.Sequencing.Steps;
 
 /// <summary>
 /// Wraps a step to add a timeout function to it.

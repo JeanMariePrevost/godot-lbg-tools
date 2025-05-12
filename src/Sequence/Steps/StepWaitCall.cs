@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
 
-namespace LBG.LBGTools.Sequence.Steps;
+namespace LBG.LBGTools.Sequencing.Steps;
 
 /// <summary>
 /// Waits until a provided action is called.

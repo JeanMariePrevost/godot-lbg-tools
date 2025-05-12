@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
-using LBG.LBGTools.Sequence.Steps;
+using LBG.LBGTools.Sequencing.Steps;
 using Godot;
 using LBG.LBGTools.Signal;
 
-namespace LBG.LBGTools.Sequence;
+namespace LBG.LBGTools.Sequencing;
 
 /// <summary>
 /// A sequencing utility that allows scheduling of steps (delays, signals, conditions, etc.) to be executed in order.
