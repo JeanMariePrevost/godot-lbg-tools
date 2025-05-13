@@ -2,7 +2,7 @@
 using Godot;
 using System;
 
-namespace LBG.LBGTools;
+namespace LBG.GodotTools;
 
 [Tool]
 public partial class LBGToolsPlugin : EditorPlugin {

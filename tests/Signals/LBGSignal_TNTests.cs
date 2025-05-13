@@ -1,6 +1,7 @@
+using LBG.GodotTools.Signal;
 using Xunit;
 
-namespace LBG.LBGTools.Signal.Tests;
+namespace LBG.Tests.GodotTools.Signal;
 public class LBGSignal_TNTests {
 
     [Fact]

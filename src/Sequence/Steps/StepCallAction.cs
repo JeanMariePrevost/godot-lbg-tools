@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
 
-namespace LBG.LBGTools.Sequencing.Steps;
+namespace LBG.GodotTools.Sequences.Steps;
 
 /// <summary>
 /// Calls an action.

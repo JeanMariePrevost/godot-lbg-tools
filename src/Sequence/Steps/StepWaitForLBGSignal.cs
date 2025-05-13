@@ -1,8 +1,8 @@
 using System;
 using System.Threading.Tasks;
-using LBG.LBGTools.Signal;
+using LBG.GodotTools.Signal;
 
-namespace LBG.LBGTools.Sequencing.Steps;
+namespace LBG.GodotTools.Sequences.Steps;
 
 /// <summary>
 /// Waits for a LBGSignal to be emitted.

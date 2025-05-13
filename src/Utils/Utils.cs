@@ -2,7 +2,7 @@ using Godot;
 using System.IO;
 using System.Diagnostics;
 
-namespace LBG.LBGTools.Utils;
+namespace LBG.GodotTools.Utils;
 
 /// <summary>
 /// A general helper class for various non-specific utility functions.

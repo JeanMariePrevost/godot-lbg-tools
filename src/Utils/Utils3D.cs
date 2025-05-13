@@ -1,6 +1,6 @@
 using Godot;
 
-namespace LBG.LBGTools.Utils;
+namespace LBG.GodotTools.Utils;
 
 /// <summary>
 /// A helper class for various utility functions that are specific to 3D.
